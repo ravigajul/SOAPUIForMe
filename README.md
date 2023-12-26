@@ -58,7 +58,7 @@ outputStream.close()
 log.info "Response wrote to  : $file"
 ```
 
-##  Sript Assertion 
+##  Script Assertion 
 ```groovy
 import com.eviware.soapui.support.XmlHolder
 def response = context.expand('${<RequestStep>#Response}')
