@@ -57,3 +57,15 @@ workbook.write(outputStream)
 outputStream.close()
 log.info "Response wrote to  : $file"
 ```
+
+##  Sript Assertion 
+```groovy
+import com.eviware.soapui.support.XmlHolder
+def response = context.expand('${<RequestStep>#Response}')
+def parseXmlResponse = new XmlHolder(response)
+log.info parseXmlResponse.getNodeValue('<xpath>')
+def memberId= context.expand('${MemberIDs#MemberID}')
+def transactionType = '<Expected data>'
+assert  parseXmlResponse.getNodeValue('<xpath>').contains('<text>'):"<Error message when not matching>"
+assert  parseXmlResponse.getNodeValue('<xpath>').contains('<text to be validated>'):"<Error message when not matching>"
+```
