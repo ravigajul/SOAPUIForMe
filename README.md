@@ -69,3 +69,23 @@ def transactionType = '<Expected data>'
 assert  parseXmlResponse.getNodeValue('<xpath>').contains('<text>'):"<Error message when not matching>"
 assert  parseXmlResponse.getNodeValue('<xpath>').contains('<text to be validated>'):"<Error message when not matching>"
 ```
+
+## Get the outcome of an assertion (in this case Script Assertion)
+```groovy
+// get outcome of the test
+def testOutCome =context.testCase.getTestStepByName('<stepName>').getAssertionByName('Script Assertion').status.toString()
+log.info(testOutCome)
+```
+
+## Add both Request & Response to the spreadsheet
+```groovy
+//create a new cell
+def cellZero = row.createCell(0)
+def cellOne = row.createCell(1)
+// Set the cell value
+def xmlRequest = context.expand('${Eligibility270#Request}')
+log.info(xmlRequest)
+cellZero.setCellValue(xmlRequest)
+def xmlResponse = context.expand('${Eligibility270#Response}')
+cellOne.setCellValue(xmlResponse)
+```
