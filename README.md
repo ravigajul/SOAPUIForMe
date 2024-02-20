@@ -89,3 +89,15 @@ cellZero.setCellValue(xmlRequest)
 def xmlResponse = context.expand('${Eligibility270#Response}')
 cellOne.setCellValue(xmlResponse)
 ```
+## Add column headers to excel
+```groovy
+//get last row number
+def lastRowNum = sheet.getLastRowNum()
+log.info("last Row " + lastRowNum)
+
+if(lastRowNum==-1)
+row.createCell(0).setCellValue("RequestXml")
+row.createCell(1).setCellValue("ResponseXml")
+lastRowNum++
+}
+```
