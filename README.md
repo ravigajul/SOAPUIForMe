@@ -94,10 +94,29 @@ cellOne.setCellValue(xmlResponse)
 //get last row number
 def lastRowNum = sheet.getLastRowNum()
 log.info("last Row " + lastRowNum)
-
-if(lastRowNum==-1)
+def row = sheet.createRow(0)
+if(lastRowNum==-1){
 row.createCell(0).setCellValue("RequestXml")
 row.createCell(1).setCellValue("ResponseXml")
 lastRowNum++
 }
+//create a new row
+row =sheet.createRow(lastRowNum+1)
+
+//create a new cell
+def cellZero = row.createCell(0)
+def cellOne = row.createCell(1)
+// Set the cell value
+def xmlRequest = context.expand('${NullEdiHeader#Request}')
+log.info(xmlRequest)
+cellZero.setCellValue(xmlRequest)
+def xmlResponse = context.expand('${NullEdiHeader#Response}')
+cellOne.setCellValue(xmlResponse)
+
+// Write the workbook to a file
+def file = new File(filePath.toString())
+def outputStream = new FileOutputStream(file)
+workbook.write(outputStream)
+outputStream.close()
+log.info "Response wrote to  : $file"
 ```
