@@ -120,3 +120,5 @@ workbook.write(outputStream)
 outputStream.close()
 log.info "Response wrote to  : $file"
 ```
+## Conditional Go To
+https://support.smartbear.com/readyapi/docs/functional/steps/goto.html?sbsearch=Conditional
