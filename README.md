@@ -122,3 +122,35 @@ log.info "Response wrote to  : $file"
 ```
 ## Conditional Go To
 https://support.smartbear.com/readyapi/docs/functional/steps/goto.html?sbsearch=Conditional
+
+## Generate Time Stamps
+```groovy
+import java.text.SimpleDateFormat
+import java.util.Calendar
+
+//Get current Time stamp
+def currentTimeStamp = new Date()
+def sdf1 = new SimpleDateFormat("yyMMdd") //format to yymmdd
+def formattedCurrentTimeStamp1 = sdf1.format(currentTimeStamp)
+
+def sdf2 = new SimpleDateFormat("yyyyMMdd") //format to yymmdd
+def formattedCurrentTimeStamp2 = sdf2.format(currentTimeStamp)
+
+log.info("Current Time Stamp1:  $formattedCurrentTimeStamp1")
+log.info("Current Time Stamp2:  $formattedCurrentTimeStamp2")
+
+//get timestamp minus one month
+def cal = Calendar.getInstance()
+cal.add(Calendar.MONTH, -1)
+def minusOneMonthTimeStamp = cal.time
+
+def formattedMinusOneMonthTimeStamp = sdf2.format(minusOneMonthTimeStamp)
+
+log.info("Minus One Month Time Stamp :  $formattedMinusOneMonthTimeStamp")
+
+//set properties in properties test step
+def propertiesTestStep = testRunner.testCase.getTestStepByName("Properties")
+propertiesTestStep.setPropertyValue("DATE1", formattedCurrentTimeStamp1)
+propertiesTestStep.setPropertyValue("DATE2", formattedCurrentTimeStamp2)
+propertiesTestStep.setPropertyValue("SERVICEDATE", formattedMinusOneMonthTimeStamp)
+```
