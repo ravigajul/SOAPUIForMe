@@ -154,3 +154,17 @@ propertiesTestStep.setPropertyValue("DATE1", formattedCurrentTimeStamp1)
 propertiesTestStep.setPropertyValue("DATE2", formattedCurrentTimeStamp2)
 propertiesTestStep.setPropertyValue("SERVICEDATE", formattedMinusOneMonthTimeStamp)
 ```
+
+## Clear all the key values for a given property
+```groovy
+def testStep = context.testCase.getTestStepByName("Properties")
+
+def props = testStep.getPropertyList()
+
+for ( int i=0;i<props.size();i++)
+{
+	def prop = props.get(i)
+	prop.value = ""
+}
+log.info ("Cleared all the property values")
+```
