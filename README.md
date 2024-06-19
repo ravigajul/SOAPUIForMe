@@ -201,9 +201,28 @@ if (!file.exists()) {
     return
 }
 
-// Attach the file to the request
-request.attachFile(file,true)
+// Attach the file to the request (with caching)
+def attachment = request.attachFile(file, true)
+
+// Check if the attachment is not null
+if (attachment == null) {
+    log.error "Failed to attach the file."
+    return
+}
+
+// Update the properties of the attachment
+attachment.setContentType("text/plain")  // Setting the content type
+
+
+// Set the contentID if applicable
+attachment.setContentID("test.txt")      // Setting the content ID
+attachment.setPart("1") //setting part
+
+
+// Set the cached status (true or false)
+//attachment.setCached(true)               // Setting the cached status
 
 // Log success
-log.info "File attached successfully to the request."
+log.info "File attached successfully to the request with updated properties."
+
 ```
