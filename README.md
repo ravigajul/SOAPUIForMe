@@ -189,8 +189,14 @@ if (loginStep == null || !(loginStep instanceof WsdlTestRequestStep)) {
 // Get the request object from the login step
 def request = loginStep.getTestRequest() as WsdlTestRequest
 
-// Path to the file you want to attach
-def filePath = "C:/Users/<user>/Downloads/test.txt"
+// Get the project directory
+def projectDir = new File(context.expand('${projectDir}'))
+
+// File name you want to attach
+def fileName = "test.txt"
+
+// Construct the file path relative to the project directory
+def filePath = projectDir.path + File.separator + fileName
 
 // Create a file object
 def file = new File(filePath)
@@ -210,19 +216,15 @@ if (attachment == null) {
     return
 }
 
-// Update the properties of the attachment
-attachment.setContentType("text/plain")  // Setting the content type
+// Set the content type of the attachment
+attachment.setContentType("text/plain")
 
+// Set the content ID of the attachment (optional)
+attachment.setContentID(fileName)
 
-// Set the contentID if applicable
-attachment.setContentID("test.txt")      // Setting the content ID
-attachment.setPart("1") //setting part
-
-
-// Set the cached status (true or false)
-//attachment.setCached(true)               // Setting the cached status
+// Set the part number of the attachment (optional)
+attachment.setPart("1")
 
 // Log success
 log.info "File attached successfully to the request with updated properties."
-
 ```
