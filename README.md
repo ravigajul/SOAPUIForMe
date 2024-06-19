@@ -168,3 +168,42 @@ for ( int i=0;i<props.size();i++)
 }
 log.info ("Cleared all the property values")
 ```
+## Attach a file in the attachment section of the Login step.
+
+```groovy
+import com.eviware.soapui.impl.wsdl.teststeps.WsdlTestRequestStep
+import com.eviware.soapui.impl.wsdl.teststeps.WsdlTestRequest
+
+// Get the current test case
+def testCase = context.testCase
+
+// Get the "Login" test step
+def loginStep = testCase.getTestStepByName("Login")
+
+// Ensure the login step is a valid request step
+if (loginStep == null || !(loginStep instanceof WsdlTestRequestStep)) {
+    log.error "The login step is not found or is not a valid request step."
+    return
+}
+
+// Get the request object from the login step
+def request = loginStep.getTestRequest() as WsdlTestRequest
+
+// Path to the file you want to attach
+def filePath = "C:/Users/<user>/Downloads/test.txt"
+
+// Create a file object
+def file = new File(filePath)
+
+// Check if the file exists
+if (!file.exists()) {
+    log.error "File not found: " + filePath
+    return
+}
+
+// Attach the file to the request
+request.attachFile(file,true)
+
+// Log success
+log.info "File attached successfully to the request."
+```
