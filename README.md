@@ -265,3 +265,14 @@ def propertiesStep = testRunner.testCase.testSteps["Properties"]
 propertiesStep.setPropertyValue("uniqueID",uniqueID)
 propertiesStep.setPropertyValue("test","1")
 ```
+
+## Extract value from properties Step
+```bash
+//extract contentid
+def propertiesStep = testRunner.testCase.testSteps["Properties"]
+def fullValue = propertiesStep.getPropertyValue('contentID')
+def contentIDExtracted = fullValue.find(/(?<=cid:)\d+/)
+propertiesStep.setPropertyValue("contentID",contentIDExtracted)
+log.info fullValue
+log.info contentIDExtracted
+```
