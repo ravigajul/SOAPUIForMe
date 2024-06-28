@@ -228,3 +228,40 @@ attachment.setPart("1")
 // Log success
 log.info "File attached successfully to the request with updated properties."
 ```
+
+## Genenerate unique checksum
+
+```bash
+def generateCheckSum(filename){
+	def command =["cmd","/c","CertUtil","-hashfile",filename,"sha1"]
+	def process = command.execute()
+	process.waitFor()
+
+	def output  = process.in.text
+	def checksum = output.split(/\r?\n/)[1].trim()
+	return checksum
+}
+
+//Get the project directory
+def projectDir = new File(context.expand('${projectDir}'))
+
+//File Name to attach
+def fileName ="file-0319.dat"
+
+//construct file path
+def filePath = projectDir.path +"\\"+ fileName
+def checksum =  generateCheckSum(filePath)
+
+log.info checksum
+```
+
+## Generate UUID
+```bash
+import java.util.UUID
+
+def uniqueID =  UUID.randomUUID().toString()
+
+def propertiesStep = testRunner.testCase.testSteps["Properties"]
+propertiesStep.setPropertyValue("uniqueID",uniqueID)
+propertiesStep.setPropertyValue("test","1")
+```
