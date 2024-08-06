@@ -207,6 +207,14 @@ if (!file.exists()) {
     return
 }
 
+// Remove existing attachments if any
+def attachments = request.getAttachments()
+if (attachments != null) {
+    for (attachment in attachments) {
+        request.removeAttachment(attachment)
+    }
+}
+
 // Attach the file to the request (with caching)
 def attachment = request.attachFile(file, true)
 
