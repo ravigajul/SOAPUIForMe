@@ -284,3 +284,30 @@ propertiesStep.setPropertyValue("contentID",contentIDExtracted)
 log.info fullValue
 log.info contentIDExtracted
 ```
+
+## Generate random 9 digits
+
+```bash
+// Function to generate a random 9-digit number based on the current timestamp
+String generateRandom9DigitNumber() {
+    // Get the current timestamp in milliseconds
+    long timestamp = System.currentTimeMillis()
+    
+    // Convert the timestamp to a string
+    String timestampStr = Long.toString(timestamp)
+    
+    // Get the last 9 digits of the timestamp
+    String last9Digits = timestampStr.substring(timestampStr.length() - 9)
+    
+    // Ensure the number does not start with '0'
+    if (last9Digits.startsWith('0')) {
+        last9Digits = '1' + last9Digits.substring(1) // Replace the first digit with '1'
+    }
+    
+    return last9Digits
+}
+
+// Example usage
+String random9DigitNumber = generateRandom9DigitNumber()
+println "Random 9-digit number: $random9DigitNumber"
+```
