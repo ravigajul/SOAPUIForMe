@@ -311,3 +311,12 @@ String generateRandom9DigitNumber() {
 String random9DigitNumber = generateRandom9DigitNumber()
 println "Random 9-digit number: $random9DigitNumber"
 ```
+
+## Generate Random 9 digit
+```javascript
+import java.util.Random
+
+def randomRandom9DigitNumber = new Random().nextInt(900000000)+100000000
+
+log.info (randomRandom9DigitNumber)
+```
