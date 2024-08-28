@@ -1,6 +1,6 @@
 # SOAPUIForMe
 ## Groovy Script to Add Response to Excel
-Add latest poi.jar, commons-io and poi-ooxml to bin/ext directory for soapui
+Add latest poi.jar,poi-ooxml commons-io,commons-collections4  to bin/ext directory for soapui
 ```groovy
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
