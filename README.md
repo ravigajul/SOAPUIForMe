@@ -337,3 +337,89 @@ if (attachmentContent.contains("payload id")) {
     testRunner.fail("Test step failed: 'payload id' not found in the attachment content.")
 }
 ```
+
+## Loop through all the test cases in the suite and get request, response and status for soap test step and write to excel
+```groovy
+import org.apache.poi.ss.usermodel.*
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.apache.poi.xssf.usermodel.XSSFCellStyle
+import org.apache.poi.xssf.usermodel.XSSFFont
+import org.apache.poi.xssf.usermodel.XSSFColor
+import java.nio.file.*
+import java.text.SimpleDateFormat
+import java.util.Date
+
+//get the project path dynamically
+def projectFile = context.testCase.testSuite.project.getWorkspace().getPath()
+def projectPath = new File(projectFile).parent
+//append the ile name to project path
+def dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss")
+def timeStamp = dateFormat.format(new Date())
+def fileName = "ExcelReport_${timeStamp}.xlsx" 
+def filePath = Paths.get(projectPath, fileName)
+//log.info filePath.toString()
+
+def workbook = new XSSFWorkbook()
+if (Files.exists(filePath)) {
+    workbook = new XSSFWorkbook(Files.newInputStream(filePath))
+} else {
+    // Create a new workbook
+    workbook = new XSSFWorkbook()
+    workbook.createSheet("sheet1")
+    Files.createDirectories(filePath.getParent())
+    Files.createFile(filePath)
+    workbook.write(Files.newOutputStream(filePath))
+}
+// get first sheet
+def sheet = workbook.getSheetAt(0)
+
+
+
+
+
+for (int i = 0; i < testRunner.testCase.testSuite.testCaseCount; i++) {
+    def testCase = testRunner.testCase.testSuite.testCaseList.get(i);
+    log.info "Test Case: ${testCase}"
+    for (int j = 0; j < testCase.testStepList.size(); j++) {
+        def testStep = testCase.testStepList.get(j);
+        if (testStep instanceof com.eviware.soapui.impl.wsdl.teststeps.WsdlTestRequestStep) {
+            //get last row number
+            def lastRowNum = sheet.getLastRowNum()
+            log.info("last Row " + lastRowNum)
+            def row = sheet.createRow(0)
+            if (lastRowNum == -1) {
+                row.createCell(0).setCellValue("Step Name")
+                row.createCell(1).setCellValue("RequestXml")
+                row.createCell(2).setCellValue("ResponseXml")
+                row.createCell(3).setCellValue("Status")
+                lastRowNum++
+            }
+            def request = testStep.testRequest.requestContent
+            def response = testStep.testRequest.response.contentAsString
+            def status = testStep.testRequest.response.responseHeaders["#status#"]
+            //create a new row
+            row = sheet.createRow(lastRowNum+1)
+            //create a new cell
+            def cellZero = row.createCell(0)
+            def cellOne = row.createCell(1)
+            def cellTwo = row.createCell(2)
+            def cellThree = row.createCell(3)
+            cellZero.setCellValue("${testStep.name}")
+            cellOne.setCellValue(request)
+            cellTwo.setCellValue(response)
+            cellThree.setCellValue(status)
+            log.info "Step Name: ${testStep.name}"
+            log.info "Request: ${request}"
+            log.info "Resonse: ${response}"
+            log.info"Status: ${status}"
+        }
+    }
+}
+
+// Write the workbook to a file
+def file = new File(filePath.toString())
+def outputStream = new FileOutputStream(file)
+workbook.write(outputStream)
+outputStream.close()
+log.info "Response wrote to  : $file"
+```
