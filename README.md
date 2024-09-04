@@ -320,3 +320,20 @@ def randomRandom9DigitNumber = new Random().nextInt(900000000)+100000000
 
 log.info (randomRandom9DigitNumber)
 ```
+## Read the response attachment content
+```javascript
+// Get the response attachment
+def response = testRunner.testCase.testSteps["YourRequestStepName"].testRequest.response
+def attachment = response.attachments[0]
+
+// Read the attachment content from the input stream
+def attachmentContent = attachment.inputStream.text
+
+// Check if the attachment content contains the text "payload id"
+if (attachmentContent.contains("payload id")) {
+    log.info "The attachment contains the text 'payload id'."
+} else {
+    log.warn "The attachment does not contain the text 'payload id'."
+    testRunner.fail("Test step failed: 'payload id' not found in the attachment content.")
+}
+```
