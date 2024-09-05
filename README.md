@@ -376,42 +376,55 @@ def sheet = workbook.getSheetAt(0)
 
 
 
-
+int RowNum = 0
 for (int i = 0; i < testRunner.testCase.testSuite.testCaseCount; i++) {
     def testCase = testRunner.testCase.testSuite.testCaseList.get(i);
+   
     log.info "Test Case: ${testCase}"
     for (int j = 0; j < testCase.testStepList.size(); j++) {
+     	 def testCaseName =  testCase.name
         def testStep = testCase.testStepList.get(j);
         if (testStep instanceof com.eviware.soapui.impl.wsdl.teststeps.WsdlTestRequestStep) {
             //get last row number
-            def lastRowNum = sheet.getLastRowNum()
-            log.info("last Row " + lastRowNum)
-            def row = sheet.createRow(0)
-            if (lastRowNum == -1) {
-                row.createCell(0).setCellValue("Step Name")
-                row.createCell(1).setCellValue("RequestXml")
-                row.createCell(2).setCellValue("ResponseXml")
-                row.createCell(3).setCellValue("Status")
-                lastRowNum++
+            
+            
+                  if (RowNum == 0) {
+                  	  def row = sheet.createRow(RowNum)
+                  	   
+                  	   //def stepname= 'Step Name'
+                row.createCell(0).setCellValue('TestCase')
+                row.createCell(1).setCellValue('Step Name')
+                row.createCell(2).setCellValue('RequestXml')
+                row.createCell(3).setCellValue('ResponseXml')
+                row.createCell(4).setCellValue('result')
+                RowNum++
             }
+            int lastRowNum = sheet.getLastRowNum()
+          
             def request = testStep.testRequest.requestContent
-            def response = testStep.testRequest.response.contentAsString
-            def status = testStep.testRequest.response.responseHeaders["#status#"]
+             def response = testStep.testRequest.response?.contentAsString ?: "No response"
+           def status = testStep.testRequest.response?.responseHeaders?.get("#status#") ?: "No status"
+          //def result= testStep.run(testRunner,context).getStatus().toString()
+          def AttachmentContent= context.testCase.testSuite.getPropertyValue("ExtractedData")
+          
             //create a new row
-            row = sheet.createRow(lastRowNum+1)
+            row = sheet.createRow(++lastRowNum)
             //create a new cell
             def cellZero = row.createCell(0)
             def cellOne = row.createCell(1)
             def cellTwo = row.createCell(2)
             def cellThree = row.createCell(3)
-            cellZero.setCellValue("${testStep.name}")
-            cellOne.setCellValue(request)
-            cellTwo.setCellValue(response)
-            cellThree.setCellValue(status)
+              def cellFour = row.createCell(4)
+            cellZero.setCellValue("${testCaseName}")
+            cellOne.setCellValue("${testStep.name}")
+            cellTwo.setCellValue(request)
+            cellThree.setCellValue(response)
+            cellFour.setCellValue(status)
+            
             log.info "Step Name: ${testStep.name}"
             log.info "Request: ${request}"
             log.info "Resonse: ${response}"
-            log.info"Status: ${status}"
+            log.info"result: ${status}"
         }
     }
 }
