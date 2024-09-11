@@ -338,7 +338,7 @@ if (attachmentContent.contains("payload id")) {
 }
 ```
 
-## Loop through all the test cases in the suite and get request, response and status for soap test step and write to excel
+## Loop through all the test cases in the suite and get request, response and status for soap test step and write to excel and attachment content of response too
 ```groovy
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
@@ -374,39 +374,49 @@ if (Files.exists(filePath)) {
 def sheet = workbook.getSheetAt(0)
 
 
-
-
+def AttachmentContent = ""
+def attachment = ""
 int RowNum = 0
 for (int i = 0; i < testRunner.testCase.testSuite.testCaseCount; i++) {
     def testCase = testRunner.testCase.testSuite.testCaseList.get(i);
-   
     log.info "Test Case: ${testCase}"
     for (int j = 0; j < testCase.testStepList.size(); j++) {
-     	 def testCaseName =  testCase.name
         def testStep = testCase.testStepList.get(j);
         if (testStep instanceof com.eviware.soapui.impl.wsdl.teststeps.WsdlTestRequestStep) {
             //get last row number
-            
-            
-                  if (RowNum == 0) {
-                  	  def row = sheet.createRow(RowNum)
-                  	   
-                  	   //def stepname= 'Step Name'
+            if (RowNum == 0) {
+                def row = sheet.createRow(RowNum)
+                //def stepname= 'Step Name'
                 row.createCell(0).setCellValue('TestCase')
                 row.createCell(1).setCellValue('Step Name')
                 row.createCell(2).setCellValue('RequestXml')
                 row.createCell(3).setCellValue('ResponseXml')
-                row.createCell(4).setCellValue('result')
+                //row.createCell(4).setCellValue('result')
+                row.createCell(5).setCellValue("AttachmentContent")
+                row.createCell(6).setCellValue("ICN")
                 RowNum++
             }
             int lastRowNum = sheet.getLastRowNum()
-          
             def request = testStep.testRequest.requestContent
-             def response = testStep.testRequest.response?.contentAsString ?: "No response"
-           def status = testStep.testRequest.response?.responseHeaders?.get("#status#") ?: "No status"
-          //def result= testStep.run(testRunner,context).getStatus().toString()
-          def AttachmentContent= context.testCase.testSuite.getPropertyValue("ExtractedData")
-          
+            def response = testStep.testRequest.response?.contentAsString ?: "No response"
+            //def status = testStep.testRequest.response?.responseHeaders?.get("#status#") ?: "No status"
+            //  def result= testStep.run(testRunner,context).getStatus().toString()
+            //def AttachmentContent= testRunner.testCase.getPropertyValue("attachmentContent")
+            def ICN = context.testCase.testSuite.getPropertyValue("ICN")
+            def responseObj = testStep.testRequest.response
+            //	response.
+            //      response.getClass().getMethods().each { method ->
+            //      log.info "${method.name}"
+            //      }
+            try  {
+                attachment = responseObj.attachments[0]
+                def attachmentContent = attachment.inputStream.text
+                log.info attachmentContent
+                AttachmentContent = attachmentContent
+            } catch (Exception e) {
+                AttachmentContent = ""
+                log.info "No attachment exists"
+            }
             //create a new row
             row = sheet.createRow(++lastRowNum)
             //create a new cell
@@ -414,17 +424,22 @@ for (int i = 0; i < testRunner.testCase.testSuite.testCaseCount; i++) {
             def cellOne = row.createCell(1)
             def cellTwo = row.createCell(2)
             def cellThree = row.createCell(3)
-              def cellFour = row.createCell(4)
-            cellZero.setCellValue("${testCaseName}")
+            //def cellFour =  row.createCell(4)
+            def cellFive = row.createCell(5)
+            def cellSix = row.createCell(6)
+            cellZero.setCellValue("${testCase.name}")
             cellOne.setCellValue("${testStep.name}")
             cellTwo.setCellValue(request)
             cellThree.setCellValue(response)
-            cellFour.setCellValue(status)
-            
+            //cellFour.setCellValue(result)
+            cellFive.setCellValue("${AttachmentContent}")
+            cellSix.setCellValue(ICN)
             log.info "Step Name: ${testStep.name}"
             log.info "Request: ${request}"
             log.info "Resonse: ${response}"
-            log.info"result: ${status}"
+            //log.info"result: ${result}"
+            log.info"AttachmentContent: ${AttachmentContent}"
+            log.info"ICN: ${ICN}"
         }
     }
 }
